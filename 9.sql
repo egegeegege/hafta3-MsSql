@@ -1,6 +1,6 @@
--- Koşul (Condition) yapıları
--- if else blokları bir takım olarak çalışır ve sadece bu bloklardan birisi çalışır.
--- bir blokta if - else bir defa yazılrıken else if birden çok defa opsiyonel olarak yazılır
+-- KoÅŸul (Condition) yapÄ±larÄ±
+-- if else bloklarÄ± bir takÄ±m olarak Ã§alÄ±ÅŸÄ±r ve sadece bu bloklardan birisi Ã§alÄ±ÅŸÄ±r.
+-- bir blokta if - else bir defa yazÄ±lrÄ±ken else if birden Ã§ok defa opsiyonel olarak yazÄ±lÄ±r
 
 
 /* 
@@ -21,34 +21,34 @@ declare @sayi int
 set @sayi = 10
 if(@sayi>0)
 	begin
-		print ('Sayı sıfırdan büyüktür')
+		print ('SayÄ± sÄ±fÄ±rdan bÃ¼yÃ¼ktÃ¼r')
 	end
 else if(@sayi<0)
 	begin
-		print ('Sayı sıfırdan küçüktür')
+		print ('SayÄ± sÄ±fÄ±rdan kÃ¼Ã§Ã¼ktÃ¼r')
 	end
 else 
 	begin
-		print ('Sayı sıfırdır.')
+		print ('SayÄ± sÄ±fÄ±rdÄ±r.')
 	end
 
 
 if(year(getdate()) = 2024)
 begin
-	print ('2024 yılındasınız')
+	print ('2024 yÄ±lÄ±ndasÄ±nÄ±z')
 end
 else if(year(getdate()) = 2023)
 begin
-	print ('2023 yılındasınız')
+	print ('2023 yÄ±lÄ±ndasÄ±nÄ±z')
 end
 else
 begin
-	print ('2024 yada 2023 yılında değilsiniz')
+	print ('2024 yada 2023 yÄ±lÄ±nda deÄŸilsiniz')
 end
 
 
 
--- bir öğrenciye ait not bir fonksiyonda parametre alarak alınacak değer;
+-- bir Ã¶ÄŸrenciye ait not bir fonksiyonda parametre alarak alÄ±nacak deÄŸer;
 -- not: 0-20 => FF
 -- not: 21-40 => DD
 -- not: 41-70 => CC
@@ -80,18 +80,61 @@ begin
 		end
 	else
 		begin
-			set @harfliNot = 'Notunuz 0-100 arasında olmalıdır.'
+			set @harfliNot = 'Notunuz 0-100 arasÄ±nda olmalÄ±dÄ±r.'
 		end
 	return @harfliNot
 end
 
 print dbo.fnc_HarfliNot(120)
 
--- ÖDEV
+-- Ã–DEV
 --1
--- Çalışanlar tablosundaki çalışanların yaşları 70 ten büyük olanları Emeklilik yaşınız geldi 70 ten küçük olanları
--- ise Emekli olamadınız uyarısını fonksiyon ve if kavramlarını kullanarak yazdırınız.
+-- Ã‡alÄ±ÅŸanlar tablosundaki Ã§alÄ±ÅŸanlarÄ±n yaÅŸlarÄ± 70 ten bÃ¼yÃ¼k olanlarÄ± Emeklilik yaÅŸÄ±nÄ±z geldi 70 ten kÃ¼Ã§Ã¼k olanlarÄ±
+-- ise Emekli olamadÄ±nÄ±z uyarÄ±sÄ±nÄ± fonksiyon ve if kavramlarÄ±nÄ± kullanarak yazdÄ±rÄ±nÄ±z.
+
+create function fnc_EmployeeEmekli(@id int)
+returns varchar(max)
+as
+begin
+	declare @yas int
+	select @yas = year(getdate()) - year(BirthDate) from Employees where EmployeeID = @id
+	if(@yas>=70)
+		begin
+			return 'Emekli oldunuz.'
+		end
+	else
+		begin
+			return 'Emekli olamadÄ±nÄ±z'
+		end
+	return ''
+end
+
+select dbo.fnc_EmployeeEmekli(8)
+
+select year(getDate()) - year(BirthDate) , EmployeeID, FirstName from Employees
+
 --2
--- Category Id si 1 olan ürünlerin ortalama fiyatı 100 den büyük ise Ortalama yüksek Değil ise Ortalama düşük yazan
--- sorguyu yazınız. Fonksiyon, if , aggregate
+-- Category Id si 1 olan Ã¼rÃ¼nlerin ortalama fiyatÄ± 100 den bÃ¼yÃ¼k ise Ortalama yÃ¼ksek DeÄŸil ise Ortalama dÃ¼ÅŸÃ¼k yazan
+-- sorguyu yazÄ±nÄ±z. Fonksiyon, if , aggregate
+
+create function fnc_OrtalamaBilgisi(@id int)
+returns varchar(max)
+as
+begin
+	declare @ortalama int
+	select @ortalama  = avg(UnitPrice) from Products where CategoryID = @id
+	if(@ortalama>=100)
+		begin
+			return 'Ortalama yÃ¼ksek'
+		end
+	else
+		begin
+			return 'Ortalama dÃ¼ÅŸÃ¼k'
+		end
+	return ''
+end
+
+
+print dbo.fnc_OrtalamaBilgisi(110)
+
 
